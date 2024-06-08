@@ -13,3 +13,8 @@ Compression for data records<br>
 ZIP<br>
 File extension format<br>
 .parquet<br>
+
+
+
+<br>
+BufferingHints.IntervalInSeconds must be at least 60 seconds when Dynamic Partitioning is enabled.
