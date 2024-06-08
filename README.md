@@ -8,8 +8,8 @@ customize the S3 prefix with dynamic expressions that are evaluated at runtime.
 
 !{timestamp:yyyy}-!{timestamp:MM}-!{timestamp:dd}/!{timestamp:HH}/
 
-Compression, file extension, and encryption
-Compression for data records
-ZIP
-File extension format
-.parquet
+Compression, file extension, and encryption<br>
+Compression for data records<br>
+ZIP<br>
+File extension format<br>
+.parquet<br>
