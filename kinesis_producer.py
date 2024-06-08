@@ -2,8 +2,7 @@ import random
 import time
 import json
 import boto3
-
-
+from botocore.exceptions import ClientError
 
 def generate_message():
     """ Generate the message data with random values. """
@@ -25,24 +24,29 @@ def generate_message():
         "otc": None
     }
     
-    
-    
 def kinesis_pipeline():
-    
-    kinesis = boto3.client('kinesis', region_name='us-east-1')
+    session = boto3.Session(region_name='us-east-1')
+    kinesis = session.client('kinesis')
     
     while True:
-        message = generate_message()
-        message_str = json.dumps(message)
-        print(f'Producing message: {message_str}')
-        kinesis.put_record(
-            StreamName='test',
-            Data=message_str,
-            PartitionKey=message['symbol']
-        )
-        time.sleep(0.2)
-
-
+        try:
+            message = generate_message()
+            message_str = json.dumps(message)
+            print(f'Producing message: {message_str}')
+            kinesis.put_record(
+                StreamName='test',
+                Data=message_str,
+                PartitionKey=message['symbol']
+            )
+            time.sleep(0.2)
+        except ClientError as e:
+            if e.response['Error']['Code'] == 'ExpiredTokenException':
+                print("Token expired, refreshing credentials")
+                session = boto3.Session(region_name='us-east-1')
+                kinesis = session.client('kinesis')
+            else:
+                print(f"Unexpected error: {e}")
+                raise
 
 if __name__ == '__main__':
     kinesis_pipeline()
